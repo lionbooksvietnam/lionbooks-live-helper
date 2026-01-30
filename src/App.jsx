@@ -6,6 +6,7 @@ function App() {
   const [currentCard, setCurrentCard] = useState(null)
   const [showCard, setShowCard] = useState(false)
   const [lastShownId, setLastShownId] = useState(null)
+  const [slideDirection, setSlideDirection] = useState(null) // 'left' | 'right' | null
 
   // Lọc thẻ theo tag
   const filteredCards = useMemo(() => {
@@ -37,9 +38,13 @@ function App() {
 
     const randomCard = getRandomCard(cards, lastShownId)
     if (randomCard) {
-      setCurrentCard(randomCard)
-      setLastShownId(randomCard.id)
-      setShowCard(true)
+      setSlideDirection('right')
+      setTimeout(() => {
+        setCurrentCard(randomCard)
+        setLastShownId(randomCard.id)
+        setShowCard(true)
+        setSlideDirection(null)
+      }, 150)
     }
   }
 
@@ -48,8 +53,13 @@ function App() {
     const currentIndex = filteredCards.findIndex(c => c.id === currentCard?.id)
     const newIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length
     const newCard = filteredCards[newIndex]
-    setCurrentCard(newCard)
-    setLastShownId(newCard?.id)
+
+    setSlideDirection('left')
+    setTimeout(() => {
+      setCurrentCard(newCard)
+      setLastShownId(newCard?.id)
+      setSlideDirection(null)
+    }, 150)
   }
 
   // Điều hướng: Next
@@ -57,16 +67,25 @@ function App() {
     const currentIndex = filteredCards.findIndex(c => c.id === currentCard?.id)
     const newIndex = (currentIndex + 1) % filteredCards.length
     const newCard = filteredCards[newIndex]
-    setCurrentCard(newCard)
-    setLastShownId(newCard?.id)
+
+    setSlideDirection('right')
+    setTimeout(() => {
+      setCurrentCard(newCard)
+      setLastShownId(newCard?.id)
+      setSlideDirection(null)
+    }, 150)
   }
 
   // Random thông minh
   const handleRandom = () => {
     const randomCard = getRandomCard(filteredCards, lastShownId)
     if (randomCard) {
-      setCurrentCard(randomCard)
-      setLastShownId(randomCard.id)
+      setSlideDirection('right')
+      setTimeout(() => {
+        setCurrentCard(randomCard)
+        setLastShownId(randomCard.id)
+        setSlideDirection(null)
+      }, 150)
     }
   }
 
@@ -91,8 +110,12 @@ function App() {
 
     if (pool.length > 0) {
       const shuffledCard = pool[Math.floor(Math.random() * pool.length)]
-      setCurrentCard(shuffledCard)
-      setLastShownId(shuffledCard.id)
+      setSlideDirection('right')
+      setTimeout(() => {
+        setCurrentCard(shuffledCard)
+        setLastShownId(shuffledCard.id)
+        setSlideDirection(null)
+      }, 150)
     }
   }
 
@@ -101,6 +124,7 @@ function App() {
     setShowCard(false)
     setCurrentCard(null)
     setLastShownId(null)
+    setSlideDirection(null)
   }
 
   // Tính index hiện tại trong filtered cards
@@ -118,6 +142,13 @@ function App() {
     'insight': 'bg-pink-500',
     'product': 'bg-blue-500',
     'call-to-action': 'bg-green-500'
+  }
+
+  // Slide animation class
+  const getSlideClass = () => {
+    if (slideDirection === 'left') return 'animate-slide-left'
+    if (slideDirection === 'right') return 'animate-slide-right'
+    return 'animate-slide-in'
   }
 
   return (
@@ -151,82 +182,105 @@ function App() {
         </div>
       </div>
 
-      {/* Flashcard Display */}
+      {/* Flashcard Display with Side Arrows */}
       {showCard && currentCard && (
-        <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-8 max-w-4xl mx-auto mb-6">
-          {/* Card Header: Type Badge + Tags */}
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            {/* Type Badge */}
-            <span className={`px-3 py-1 ${typeColors[currentCard.type]} text-white rounded-full text-sm font-bold`}>
-              {typeLabels[currentCard.type]}
-            </span>
-            {/* Tags */}
-            {currentCard.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
-              >
-                {tag}
+        <div className="relative max-w-4xl mx-auto mb-6">
+          {/* Left Arrow */}
+          <button
+            onClick={handlePrev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-6 z-10
+              w-12 h-12 rounded-full bg-white/20 backdrop-blur-lg
+              flex items-center justify-center
+              text-white text-2xl font-bold
+              opacity-50 hover:opacity-100 active:opacity-100
+              hover:bg-white/40 active:bg-white/50
+              hover:scale-110 active:scale-95
+              transition-all duration-200
+              shadow-lg"
+            aria-label="Previous card"
+          >
+            ‹
+          </button>
+
+          {/* Card */}
+          <div className={`bg-white rounded-3xl shadow-2xl p-6 md:p-8 mx-8 md:mx-16 transition-all duration-300 ${getSlideClass()}`}>
+            {/* Card Header: Type Badge + Tags */}
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              {/* Type Badge */}
+              <span className={`px-3 py-1 ${typeColors[currentCard.type]} text-white rounded-full text-sm font-bold`}>
+                {typeLabels[currentCard.type]}
               </span>
-            ))}
+              {/* Tags */}
+              {currentCard.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Card Content */}
+            <div className="prose prose-lg max-w-none">
+              <pre className="whitespace-pre-wrap font-sans text-gray-800 text-lg leading-relaxed bg-gray-50 p-6 rounded-2xl">
+                {currentCard.noidung}
+              </pre>
+            </div>
+
+            {/* Card Counter */}
+            <div className="text-center text-gray-500 mt-4">
+              Thẻ {currentIndex + 1} / {filteredCards.length}
+              {currentCard.productId && (
+                <span className="ml-2 text-gray-400">• {currentCard.productId}</span>
+              )}
+            </div>
+
+            {/* Shuffle Button - Đổi góc tiếp cận */}
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handleShuffle}
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl text-base font-bold transition-all duration-200 hover:scale-105 shadow-lg"
+              >
+                🔄 Đổi góc tiếp cận
+              </button>
+            </div>
           </div>
 
-          {/* Card Content */}
-          <div className="prose prose-lg max-w-none">
-            <pre className="whitespace-pre-wrap font-sans text-gray-800 text-lg leading-relaxed bg-gray-50 p-6 rounded-2xl">
-              {currentCard.noidung}
-            </pre>
-          </div>
-
-          {/* Card Counter */}
-          <div className="text-center text-gray-500 mt-4">
-            Thẻ {currentIndex + 1} / {filteredCards.length}
-            {currentCard.productId && (
-              <span className="ml-2 text-gray-400">• {currentCard.productId}</span>
-            )}
-          </div>
-
-          {/* Shuffle Button - Đổi góc tiếp cận */}
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={handleShuffle}
-              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl text-base font-bold transition-all duration-200 hover:scale-105 shadow-lg"
-            >
-              🔄 Đổi góc tiếp cận
-            </button>
-          </div>
+          {/* Right Arrow */}
+          <button
+            onClick={handleNext}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-6 z-10
+              w-12 h-12 rounded-full bg-white/20 backdrop-blur-lg
+              flex items-center justify-center
+              text-white text-2xl font-bold
+              opacity-50 hover:opacity-100 active:opacity-100
+              hover:bg-white/40 active:bg-white/50
+              hover:scale-110 active:scale-95
+              transition-all duration-200
+              shadow-lg"
+            aria-label="Next card"
+          >
+            ›
+          </button>
         </div>
       )}
 
-      {/* Navigation Buttons */}
+      {/* Action Buttons */}
       {showCard && (
-        <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-          <button
-            onClick={handlePrev}
-            className="px-8 py-4 bg-white/20 hover:bg-white/30 text-white rounded-2xl text-xl font-bold transition-all duration-200 hover:scale-105 backdrop-blur-lg"
-          >
-            ⬅️ Back
-          </button>
-
+        <div className="flex flex-wrap justify-center gap-4 max-w-xl mx-auto mb-6">
           <button
             onClick={handleRandom}
-            className="px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-purple-900 rounded-2xl text-xl font-bold transition-all duration-200 hover:scale-105 shadow-lg"
+            className="px-6 py-3 bg-yellow-400 hover:bg-yellow-300 text-purple-900 rounded-xl text-lg font-bold transition-all duration-200 hover:scale-105 shadow-lg"
           >
             🎲 Random
           </button>
 
           <button
-            onClick={handleNext}
-            className="px-8 py-4 bg-white/20 hover:bg-white/30 text-white rounded-2xl text-xl font-bold transition-all duration-200 hover:scale-105 backdrop-blur-lg"
-          >
-            Next ➡️
-          </button>
-
-          <button
             onClick={handleReset}
-            className="px-8 py-4 bg-red-500/80 hover:bg-red-500 text-white rounded-2xl text-xl font-bold transition-all duration-200 hover:scale-105"
+            className="px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-xl text-lg font-bold transition-all duration-200 hover:scale-105 backdrop-blur-lg"
           >
-            🔄 Reset
+            ↻ Reset
           </button>
         </div>
       )}
