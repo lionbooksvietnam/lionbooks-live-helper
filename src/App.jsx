@@ -210,14 +210,20 @@ function App() {
               <span className={`px-3 py-1 ${typeColors[currentCard.type]} text-white rounded-full text-sm font-bold`}>
                 {typeLabels[currentCard.type]}
               </span>
-              {/* Tags */}
+              {/* Tags - Clickable */}
               {currentCard.tags.map((tag) => (
-                <span
+                <button
                   key={tag}
-                  className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                  onClick={() => handleTagClick(tag)}
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200
+                    hover:scale-105 hover:brightness-110 active:scale-95 cursor-pointer
+                    ${selectedTag === tag
+                      ? 'bg-yellow-400 text-purple-900 shadow-md'
+                      : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                    }`}
                 >
-                  {tag}
-                </span>
+                  🔍 {tag}
+                </button>
               ))}
             </div>
 

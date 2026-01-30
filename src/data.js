@@ -786,40 +786,6 @@ export const flashcards = [
   },
 
   // ============================================================
-  // BỘ SỐ THÔNG MINH
-  // ============================================================
-  {
-    id: 76,
-    productId: 'bosothongminh',
-    tags: ['0-3', 'Sách tương tác'],
-    type: 'insight',
-    tone: 'warm',
-    noidung: `🔢 BỘ SỐ THÔNG MINH - Insight
-• "Bé sơ sinh cần gì để kích thích thị giác?"
-• Màu tương phản cao - phù hợp bé 0-6 tháng`
-  },
-  {
-    id: 77,
-    productId: 'bosothongminh',
-    tags: ['0-3', 'Sách tương tác'],
-    type: 'product',
-    tone: 'expert',
-    noidung: `🔢 BỘ SỐ THÔNG MINH - Sản phẩm
-• Học số 0-9 + kích thích thị giác cùng lúc
-• Mặt sau: trò tìm kiếm thông minh cho bé lớn hơn`
-  },
-  {
-    id: 78,
-    productId: 'bosothongminh',
-    tags: ['0-3', 'Sách tương tác'],
-    type: 'call-to-action',
-    tone: 'cheerful',
-    noidung: `💬 BỘ SỐ THÔNG MINH - Hỏi khách
-• "Bé nhà mình mấy tháng rồi ạ? Em tư vấn đồ kích thích thị giác!"
-• "Ai có bé sơ sinh thì gõ 'SƠ SINH' nha!"`
-  },
-
-  // ============================================================
   // CHUYỆN MÙA TRĂNG - Trung Thu
   // ============================================================
   {
